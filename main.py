@@ -26,8 +26,9 @@ else:
 def get_completion(prompt, model_name=None, system_instruction=None, retries=1):
     # List of models based on detected 2026 environment availability
     models_to_try = [
-        model_name or "gemini-2.5-flash",
+        model_name or "gemini-1.5-flash", 
         "gemini-2.0-flash",
+        "gemini-2.5-flash",
         "gemini-3.1-flash-lite",
         "gemini-2.0-flash-lite"
     ] if LLM_PROVIDER == "gemini" else [model_name or "gpt-4o-mini"]
@@ -54,11 +55,11 @@ def get_completion(prompt, model_name=None, system_instruction=None, retries=1):
                 # If it's a rate limit error or temporary overload, we retry or try next model
                 if any(x in err_msg for x in ["429", "resource_exhausted", "503", "unavailable"]):
                     if i < retries:
-                        print(f"\n[SYSTEM]: {model} busy or limited. Waiting 10s and retrying...")
-                        time.sleep(10)
+                        # print(f"\n[SYSTEM]: {model} busy or limited. Waiting 10s and retrying...")
+                        time.sleep(5) # Reduced wait for slightly faster demo fallback
                         continue
                     else:
-                        print(f"[SYSTEM]: {model} quota/capacity exhausted. Trying next model...")
+                        # print(f"[SYSTEM]: {model} quota/capacity exhausted. Trying next model...")
                         break
                 
                 if any(x in err_msg for x in ["404", "not_found"]):
@@ -103,11 +104,11 @@ YOUR SOP — answer ONLY from this data:
 STRICT RULES:
 1. ONLY answer from the SOP. Never make up prices, services, or policies.
 2. If a question cannot be answered from the SOP, acknowledge the gap
-   and output ESCALATE: <reason>
-3. If customer seems angry or makes a complaint, output ESCALATE: <reason>
-4. If customer asks a medical question, output ESCALATE: medical question
-5. If customer wants to negotiate pricing, output ESCALATE: pricing negotiation
-6. If customer explicitly asks for a human, output ESCALATE: customer requested human
+    and output [ESCALATE: <reason>]
+3. If customer seems angry or makes a complaint, output [ESCALATE: complaint/anger]
+4. If customer asks a medical question, output [ESCALATE: medical question]
+5. If customer wants to negotiate pricing, output [ESCALATE: pricing negotiation]
+6. If customer explicitly asks for a human, output [ESCALATE: human requested]
 7. After answering FAQ questions, naturally ask 2-3 qualification questions:
    what brings them in, have they had treatment before, their availability.
 8. Keep responses short, warm, and professional.
@@ -163,12 +164,12 @@ def extract_lead_data(user_message, ai_response):
     
     Current stored details: {json.dumps(state.lead_details)}
     
-    Return a JSON object with any NEW details found for:
-    - treatment_interest
-    - previous_experience
-    - availability
+    Return ONLY a JSON object with any NEW details found for:
+    - treatment_interest (e.g. "Botox for forehead")
+    - previous_experience (e.g. "First time")
+    - availability (e.g. "Fridays")
     
-    If no new details, return {{}}.
+    If no new details, return {{}}. Do NOT include any conversation or text outside the JSON.
     """
     try:
         # Use a faster/cheaper model for extraction if needed, but here we use the same fallback
@@ -206,8 +207,8 @@ def chat_step(user_message):
         state.escalated = True
         state.escalation_reason = reason
         log_escalation(reason)
-        # Clean up the reply for the user
-        ai_reply = ai_reply.split("[ESCALATE:")[0].strip()
+        # Clean up the reply for the user (remove any escalation tags)
+        ai_reply = ai_reply.split("[ESCALATE:")[0].split("ESCALATE:")[0].strip()
         if not ai_reply:
              ai_reply = "I'm going to connect you with a human specialist who can help you further with this."
 

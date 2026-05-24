@@ -1,0 +1,32 @@
+{
+    "business": "Bloom Aesthetics Clinic",
+    "hours": "Monday to Saturday, 9am to 7pm",
+    "services": [
+      {
+        "name": "Botox",
+        "price_from": "£200",
+        "details": "Anti-wrinkle injections. Results last 3-6 months."
+      },
+      {
+        "name": "Dermal Fillers",
+        "price_from": "£250",
+        "details": "Lip, cheek and jaw fillers. Results last 6-12 months."
+      },
+      {
+        "name": "Consultation",
+        "price_from": "Free",
+        "details": "Free initial consultation with our specialist."
+      }
+    ],
+    "booking": "Book via WhatsApp or our website. 24 hour cancellation notice required.",
+    "location": "Available on our website and WhatsApp.",
+    "escalate_if": [
+      "customer makes a complaint",
+      "customer asks a medical question",
+      "customer wants to negotiate pricing",
+      "more than 2 questions cannot be answered from SOP",
+      "customer expresses anger or frustration",
+      "customer explicitly asks for a human"
+    ],
+    "tone": "Friendly, professional, and reassuring. Suitable for a premium aesthetics clinic."
+  }

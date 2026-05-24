@@ -88,7 +88,7 @@ ESCALATION TRIGGERS:
 # --- PROMTPTS ---
 
 SYSTEM_PROMPT = """
-You are a friendly and professional AI assistant for Bloom Aesthetics Clinic.
+You are  friendly and professional AI assistant for Bloom Aesthetics Clinic.
 You handle inbound customer enquiries and help customers with questions,
 bookings, and information.
 
